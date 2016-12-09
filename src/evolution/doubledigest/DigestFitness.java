@@ -8,11 +8,12 @@ import java.util.Arrays;
 
 public class DigestFitness implements FitnessFunction {
 
-    private static final long serialVersionUID = -1141681050507988075L;
+    // fitness function must know the segments sizes, not only their permutation
+
     // fragment lengths
-    int[] a;
-    int[] ab;
-    int[] b;
+    private int[] a;
+    private int[] ab;
+    private int[] b;
 
     public DigestFitness(int[]a, int[]b, int[] ab) {
         this.a = a;
@@ -32,21 +33,21 @@ public class DigestFitness implements FitnessFunction {
         cutsA[0] = 0;
         int pos = 0;
         for (int i = 0; i < digestIndividual.countA(); i++) {
-            int index = (Integer)digestIndividual.getPermutatedIndex(0,i);
+            int index = (Integer)digestIndividual.getPermutedIndex(0,i);
             pos += a[index];
             cutsA[i+1] = pos;
         }
 
-        // construct the physical map: place the cuts made by the enzyme A according to the permutation
+        // construct the physical map: place the cuts made by the enzyme B according to the permutation
         int[] cutsB = new int[digestIndividual.countB()+1];
         cutsB[0] = 0;
         pos = 0;
         for (int i = 0; i < digestIndividual.countB(); i++) {
-            pos += b[(Integer)digestIndividual.getPermutatedIndex(1,i)];
+            pos += b[(Integer)digestIndividual.getPermutedIndex(1,i)];
             cutsB[i+1] = pos;
         }
 
-        // construct the physical map: place the cuts made by the enzyme A and B according to the permutation
+        // construct the physical map: place the cuts made by the enzymes A and B according to the permutation
         int[] cutsAB = new int[cutsA.length + cutsB.length];
 
         int indexA = 0;
@@ -79,6 +80,7 @@ public class DigestFitness implements FitnessFunction {
             indexAB++;
         }
 
+
         // get the AB fragments
         int[] computedAB = new int[indexAB-1];
 
@@ -90,6 +92,11 @@ public class DigestFitness implements FitnessFunction {
         Arrays.sort(computedAB);
         Arrays.sort(ab);
 
+
+        /*********************************************
+         * distance measure is the number of misfits
+         * room for improvement
+         */
         int distance = 0;
         int i = 0;
         int j = 0;
@@ -116,10 +123,10 @@ public class DigestFitness implements FitnessFunction {
 
         digestIndividual.setObjectiveValue(distance);
 
-        // we have found it!
         if(distance == 0){
-            return 10;
+            // TODO found the correct mapping, stop the evolution?
         }
+
         return 1 / (float)distance;
     }
 }

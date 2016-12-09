@@ -13,8 +13,8 @@ import java.util.Collections;
 public class DigestIndividual extends Individual {
 
     // order of fragments
-    int[] permA = null;
-    int[] permB = null;
+    private int[] permA = null;
+    private int[] permB = null;
 
     public DigestIndividual(int countA, int countB) {
         permA = new int[countA];
@@ -32,7 +32,7 @@ public class DigestIndividual extends Individual {
         return permB;
     }
 
-    public Object getPermutatedIndex(int enzyme, int n) {
+    public Object getPermutedIndex(int enzyme, int n) {
         if(enzyme == 0){
             return permA[n];
         } else if (enzyme == 1){
@@ -41,7 +41,7 @@ public class DigestIndividual extends Individual {
         else return null;
     }
 
-    public void setPermutatedIndex(int enzyme, int n, Object o) {
+    public void setPermutedIndex(int enzyme, int n, Object o) {
         if(enzyme == 0){
             permA[n] = (Integer)o;
         } else if (enzyme == 1){
@@ -54,8 +54,9 @@ public class DigestIndividual extends Individual {
      */
     @Override
     public void randomInitialization() {
-        ArrayList<Integer> randA = new ArrayList<Integer>();
-        ArrayList<Integer> randB = new ArrayList<Integer>();
+        // tohle je hnusarna, ale zjevne bych to musel mit jako Integer[] misto int[], aby to slo jednoduseji...
+        ArrayList<Integer> randA = new ArrayList<>(permA.length);
+        ArrayList<Integer> randB = new ArrayList<>(permB.length);
 
         for (int j = 0; j < permA.length; j++) {
             randA.add(j);
@@ -78,12 +79,12 @@ public class DigestIndividual extends Individual {
     @Override
     public Object clone() {
 
-        DigestIndividual newBI = (DigestIndividual) super.clone();
-        newBI.permA = new int[permA.length];
-        System.arraycopy(permA, 0, newBI.permA, 0, permA.length);
-        newBI.permB = new int[permB.length];
-        System.arraycopy(permB, 0, newBI.permB, 0, permB.length);
-        return newBI;
+        DigestIndividual newDI = (DigestIndividual) super.clone();
+        newDI.permA = new int[permA.length];
+        System.arraycopy(permA, 0, newDI.permA, 0, permA.length);
+        newDI.permB = new int[permB.length];
+        System.arraycopy(permB, 0, newDI.permB, 0, permB.length);
+        return newDI;
     }
 
     public int countA() {

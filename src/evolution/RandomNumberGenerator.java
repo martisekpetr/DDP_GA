@@ -63,7 +63,7 @@ public class RandomNumberGenerator {
     /**
      * Sets a new seed for the random number generator.
      *
-     * @param seed The seed which shall be setPermutatedIndex.
+     * @param seed The seed which shall be setPermutedIndex.
      */
 
     public void reseed(long seed) {

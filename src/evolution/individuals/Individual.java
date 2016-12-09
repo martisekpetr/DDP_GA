@@ -29,7 +29,7 @@ public abstract class Individual implements Cloneable {
     /**
      * Sets the objective value
      *
-     * @param objective The objective value which shall be setPermutatedIndex.
+     * @param objective The objective value which shall be setPermutedIndex.
      */
     public void setObjectiveValue(double objective) {
         this.objectiveValue = objective;
@@ -47,7 +47,7 @@ public abstract class Individual implements Cloneable {
     /**
      * Sets the fitness value of the individual.
      *
-     * @param fitness The fitness value of the individual which shall be setPermutatedIndex.
+     * @param fitness The fitness value of the individual which shall be setPermutedIndex.
      */
     public void setFitnessValue(double fitness) {
         fitnessValue = fitness;

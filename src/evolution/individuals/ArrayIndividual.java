@@ -18,8 +18,8 @@ public abstract class ArrayIndividual extends Individual {
     /**
      * Sets the value on the index n
      *
-     * @param n the index on which the value shall be setPermutatedIndex
-     * @param o the value which shall be setPermutatedIndex
+     * @param n the index on which the value shall be setPermutedIndex
+     * @param o the value which shall be setPermutedIndex
      */
     public abstract void set(int n, Object o);
 

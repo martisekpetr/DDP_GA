@@ -29,7 +29,7 @@ public class DigestInversionMutation implements Operator {
                 int start = Math.min(pt1, pt2);
                 int end = Math.max(pt1,pt2);
                 for(int k = start; k < end; k++){
-                    o1.setPermutatedIndex(0, k, p1.getPermutatedIndex(0, end-k+start-1));
+                    o1.setPermutedIndex(0, k, p1.getPermutedIndex(0, end-k+start-1));
                 }
             }
             if (rng.nextDouble() < mutationProbability) {
@@ -38,7 +38,7 @@ public class DigestInversionMutation implements Operator {
                 int start = Math.min(pt1, pt2);
                 int end = Math.max(pt1,pt2);
                 for(int k = start; k < end; k++){
-                    o1.setPermutatedIndex(1, k, p1.getPermutatedIndex(1, end-k+start-1));
+                    o1.setPermutedIndex(1, k, p1.getPermutedIndex(1, end-k+start-1));
                 }
             }
             offspring.add(o1);

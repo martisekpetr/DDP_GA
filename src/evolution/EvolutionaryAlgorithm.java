@@ -25,7 +25,7 @@ public class EvolutionaryAlgorithm {
     int generationNo = 0;
 
     /**
-     * Initializes an empty evolutionary algorithm. Replacement is setPermutatedIndex to the
+     * Initializes an empty evolutionary algorithm. Replacement is setPermutedIndex to the
      * instance of SGAReplacement. All other values remain unset.
      */
     public EvolutionaryAlgorithm() {

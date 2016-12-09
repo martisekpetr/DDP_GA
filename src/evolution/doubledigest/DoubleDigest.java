@@ -10,6 +10,11 @@ import evolution.selectors.RouletteWheelSelector;
 import java.io.*;
 import java.util.*;
 
+
+/************************************
+ *          MAIN PROGRAM
+ ************************************/
+
 public class DoubleDigest {
 
     static int maxGen;
@@ -33,7 +38,7 @@ public class DoubleDigest {
 
     public static void main(String[] args) {
 
-        // load project properties
+        // load project properties (or use defaults if IO error)
         prop = new Properties();
         try {
             InputStream propIn = new FileInputStream("properties/ga-digest.properties");
@@ -47,27 +52,39 @@ public class DoubleDigest {
         mutProb = Double.parseDouble(prop.getProperty("ea.mutProb", "0.05"));
         mutProbPerBit = Double.parseDouble(prop.getProperty("ea.mutProbPerBit", "0.04"));
         eliteSize = Double.parseDouble(prop.getProperty("ea.eliteSize", "0.1"));
-
-//        String inputFile = prop.getProperty("prob.inputFile", "resources/digest_easy.txt");
-
+        // input file or folder
+        String inputFile = prop.getProperty("prob.inputFile", "resources/digest_easy.txt");
         repeats = Integer.parseInt(prop.getProperty("xset.repeats", "10"));
         enableDetailsLog = prop.getProperty("xlog.detailsLog", "enabled");
         if (!enableDetailsLog.equals("enabled")) {
             DetailsLogger.disableLog();
         }
-
-        outputDirectory = prop.getProperty("xlog.outputDirectory", "tsp");
-
+        outputDirectory = prop.getProperty("xlog.outputDirectory", "digest");
         File output = new File(outputDirectory);
         output.mkdirs();
 
-        final File folder = new File("resources/digest/");
+        // Check if the file exists
+        File file = new File(inputFile);
+        if(!file.exists()){
+            System.err.println("Input file not found.");
+            System.exit(1);
+        }
 
-        for (final File fileEntry : folder.listFiles()) {
-            if (!fileEntry.isDirectory()){
+        // it can be a directory or a single file, create an input file array (possibly with only single item)
+        File[] inputFiles;
+        if(file.isDirectory()){
+            inputFiles = file.listFiles();
+        } else {
+            inputFiles = new File[]{file};
+        }
+
+        // iterate over all input files
+        for (final File fileEntry : inputFiles) {
+            if (!fileEntry.isDirectory()){   // not recursive, only depth 1
                 String filepath = fileEntry.getPath();
                 String filename = fileEntry.getName();
 
+                // init loggers
                 logFilePrefix = filename;
                 if(filename.contains("."))
                     logFilePrefix = filename.substring(0, filename.lastIndexOf('.'));
@@ -82,61 +99,66 @@ public class DoubleDigest {
 
 
                 // read the A, B and AB fragments from the input file
+                // a, b and ab are global (fuj, ale co už)
                 try {
                     parseInput(filepath);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (NumberFormatException e) {
+                } catch (IOException | NumberFormatException e) {
                     e.printStackTrace();
                 }
 
+                // run the EA, store best individuals from each run
                 List<Individual> bestInds = new ArrayList<Individual>();
-
                 for (int i = 0; i < repeats; i++) {
                     Individual best = run(i);
                     bestInds.add(best);
                 }
-
+                // print the best individuals
                 for (int i = 0; i < bestInds.size(); i++) {
                     System.out.println("run " + i + ": best objective=" + bestInds.get(i).getObjectiveValue());
                 }
-
+                // log the best individuals
                 StatsLogger.processResults(fitnessFilePrefix, fitnessStatsFile, repeats, maxGen, popSize);
                 StatsLogger.processResults(objectiveFilePrefix, objectiveStatsFile, repeats, maxGen, popSize);
-
             }
         }
     }
 
+    /**
+     * Performs one run of the EA.
+     * @param number index of the current run
+     * @return best individual found in this run
+     */
     static Individual run(int number) {
 
         //Initialize logging of the run
-
         DetailsLogger.startNewLog(detailsLogPrefix + "." + number + ".xml");
         DetailsLogger.logParams(prop);
 
         RandomNumberGenerator.getInstance().reseed(number);
 
         try {
-
+            // set up the initial population
             DigestIndividual sampleIndividual = new DigestIndividual(a.length, b.length);
-
             Population pop = new Population();
             pop.setSampleIndividual(sampleIndividual);
             pop.setPopulationSize(popSize);
+            pop.createRandomInitialPopulation();
 
+            // set up the EA
             EvolutionaryAlgorithm ea = new EvolutionaryAlgorithm();
-
+            // set fitness
             ea.setFitnessFunction(new DigestFitness(a, b, ab));
+            // set genetic operators
             ea.addOperator(new DigestInversionMutation(mutProb));
             ea.addEnvironmentalSelector(new RouletteWheelSelector());
             ea.setElite(eliteSize);
 
-            pop.createRandomInitialPopulation();
-
+            // set up loggers
             OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(fitnessFilePrefix + "." + number));
             OutputStreamWriter progOut = new OutputStreamWriter(new FileOutputStream(objectiveFilePrefix + "." + number));
 
+
+            // evolve
             for (int i = 0; i < maxGen; i++) {
                 ea.evolve(pop);
 
@@ -146,7 +168,7 @@ public class DoubleDigest {
                 StatsLogger.logObjective(pop, progOut);
             }
 
-            // pretty print the best individual
+            // pretty print the best individual (asi k nicemu)
             OutputStreamWriter bestOut = new OutputStreamWriter(new FileOutputStream(bestPrefix + "." + number));
             DigestIndividual bestInd = (DigestIndividual) pop.getSortedIndividuals().get(0);
             prettyPrintIndividual(bestInd, bestOut);
@@ -160,8 +182,6 @@ public class DoubleDigest {
 
             return bestInd;
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -169,9 +189,14 @@ public class DoubleDigest {
         return null;
     }
 
-
-    static void parseInput(String inputFile) throws IOException {
-        BufferedReader in = new BufferedReader(new FileReader(inputFile));
+    /**
+     * Parses the fragment lengths from the input file. Expects three lines, on each of them space-separated sizes of
+     * fragments: for enzyme A, enzyme B and both enzymes together
+     * @param inputFileName name of the file containing the data
+     * @throws IOException
+     */
+    static void parseInput(String inputFileName) throws IOException {
+        BufferedReader in = new BufferedReader(new FileReader(inputFileName));
         String line;
         String[] strArray;
         if ((line = in.readLine()) == null) {
