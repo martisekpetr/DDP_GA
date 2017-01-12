@@ -53,7 +53,7 @@ public class DoubleDigest {
         mutProbPerBit = Double.parseDouble(prop.getProperty("ea.mutProbPerBit", "0.04"));
         eliteSize = Double.parseDouble(prop.getProperty("ea.eliteSize", "0.1"));
         // input file or folder
-        String inputFile = prop.getProperty("prob.inputFile", "resources/digest_easy.txt");
+        String inputFile = prop.getProperty("prob.inputFile", "resources/digest_hard.txt");
         repeats = Integer.parseInt(prop.getProperty("xset.repeats", "10"));
         enableDetailsLog = prop.getProperty("xlog.detailsLog", "enabled");
         if (!enableDetailsLog.equals("enabled")) {
@@ -149,6 +149,8 @@ public class DoubleDigest {
             // set fitness
             ea.setFitnessFunction(new DigestFitness(a, b, ab));
             // set genetic operators
+            //ea.addOperator(new Order1XOverDoubleDigest(xoverProb));
+            ea.addOperator(new PMXover(xoverProb));
             ea.addOperator(new DigestInversionMutation(mutProb));
             ea.addEnvironmentalSelector(new RouletteWheelSelector());
             ea.setElite(eliteSize);

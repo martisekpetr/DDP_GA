@@ -93,5 +93,10 @@ public class DigestIndividual extends Individual {
     public int countB() {
         return permB.length;
     }
+    public int count(int enzyme) {
+        if (enzyme == 0) return permA.length;
+        if (enzyme == 1) return permB.length;
+        else return 0;
+    }
 
 }

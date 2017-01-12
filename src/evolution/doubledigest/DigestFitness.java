@@ -120,6 +120,31 @@ public class DigestFitness implements FitnessFunction {
             distance++;
             j++;
         }
+/*
+        int distance = 0;
+        int i = 0;
+        int j = 0;
+        while (i < computedAB.length && j < ab.length){
+            if(computedAB[i] == ab[j]){
+                i++;
+                j++;
+            } else if(computedAB[i] < ab[j]){
+                distance += ((computedAB[i]-ab[j])*(computedAB[i]-ab[j]))/ab[j];
+                i++;
+            } else {
+                distance += ((computedAB[i]-ab[j])*(computedAB[i]-ab[j]))/ab[j];
+                j++;
+            }
+        }*/
+        /*
+        while(i < cutsA.length){
+            distance += ((computedAB[i]-ab[j])*(computedAB[i]-ab[j]))/ab[j];
+            i++;
+        }
+        while(j < cutsB.length){
+            distance++;
+            j++;
+        }*/
 
         digestIndividual.setObjectiveValue(distance);
 
