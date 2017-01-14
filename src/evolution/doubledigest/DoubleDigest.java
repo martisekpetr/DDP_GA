@@ -53,6 +53,7 @@ public class DoubleDigest {
         mutProbPerBit = Double.parseDouble(prop.getProperty("ea.mutProbPerBit", "0.04"));
         eliteSize = Double.parseDouble(prop.getProperty("ea.eliteSize", "0.1"));
         // input file or folder
+        // tohle nastavovat v ga-digest.properties, tady je to jen backup default
         String inputFile = prop.getProperty("prob.inputFile", "resources/digest_hard.txt");
         repeats = Integer.parseInt(prop.getProperty("xset.repeats", "10"));
         enableDetailsLog = prop.getProperty("xlog.detailsLog", "enabled");
