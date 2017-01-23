@@ -25,7 +25,7 @@ public class DoubleDigest {
     static double eliteSize;
     static double xoverProb;
     static double mutProb;
-    static double mutProbPerBit;
+    static double mutProbPerEnzyme;
     static String enableDetailsLog;
     static String outputDirectory;
     static String objectiveFilePrefix;
@@ -50,7 +50,7 @@ public class DoubleDigest {
         popSize = Integer.parseInt(prop.getProperty("ea.popSize", "30"));
         xoverProb = Double.parseDouble(prop.getProperty("ea.xoverProb", "0.8"));
         mutProb = Double.parseDouble(prop.getProperty("ea.mutProb", "0.05"));
-        mutProbPerBit = Double.parseDouble(prop.getProperty("ea.mutProbPerBit", "0.04"));
+        mutProbPerEnzyme = Double.parseDouble(prop.getProperty("ea.mutProbPerEnzyme", "0.04"));
         eliteSize = Double.parseDouble(prop.getProperty("ea.eliteSize", "0.1"));
         // input file or folder
         // tohle nastavovat v ga-digest.properties, tady je to jen backup default
@@ -152,7 +152,7 @@ public class DoubleDigest {
             // set genetic operators
             //ea.addOperator(new Order1XOverDoubleDigest(xoverProb));
             ea.addOperator(new PMXover(xoverProb));
-            ea.addOperator(new DigestInversionMutation(mutProb));
+            ea.addOperator(new DigestInversionMutation(mutProb, mutProbPerEnzyme));
             ea.addEnvironmentalSelector(new RouletteWheelSelector());
             ea.setElite(eliteSize);
 
