@@ -5,6 +5,7 @@ import evolution.individuals.DigestIndividual;
 import evolution.individuals.Individual;
 import evolution.operators.*;
 import evolution.selectors.RouletteWheelSelector;
+import evolution.selectors.TournamentSelector;
 
 
 import java.io.*;
@@ -115,14 +116,20 @@ public class DoubleDigest {
                 for (int i = 0; i < repeats; i++) {
                     Individual best = run(i);
                     bestInds.add(best);
+                    /* stop the evolution if objective == 0 */
+                    if(best.getObjectiveValue() == 0.0){
+                        break;
+                    }
+                    /**/
+
                 }
                 // print the best individuals
                 for (int i = 0; i < bestInds.size(); i++) {
                     System.out.println("run " + i + ": best objective=" + bestInds.get(i).getObjectiveValue());
                 }
                 // log the best individuals
-                StatsLogger.processResults(fitnessFilePrefix, fitnessStatsFile, repeats, maxGen, popSize);
-                StatsLogger.processResults(objectiveFilePrefix, objectiveStatsFile, repeats, maxGen, popSize);
+                //StatsLogger.processResults(fitnessFilePrefix, fitnessStatsFile, repeats, maxGen, popSize);
+                //StatsLogger.processResults(objectiveFilePrefix, objectiveStatsFile, repeats, maxGen, popSize);
             }
         }
     }
@@ -157,10 +164,11 @@ public class DoubleDigest {
 
             ea.addOperator(new Order1XOverDoubleDigest(xoverProb));
             //ea.addOperator(new PMXover(xoverProb));
-            //ea.addOperator(new DigestInversionMutation(mutProb, mutProbPerEnzyme));
-            ea.addOperator(new DigestSwappingMutation(mutProb, mutProbPerEnzyme, geneChangePercentage));
+            ea.addOperator(new DigestInversionMutation(mutProb, mutProbPerEnzyme));
+            //ea.addOperator(new DigestSwappingMutation(mutProb, mutProbPerEnzyme, geneChangePercentage));
 
-            ea.addEnvironmentalSelector(new RouletteWheelSelector());
+            //ea.addEnvironmentalSelector(new RouletteWheelSelector());
+            ea.addEnvironmentalSelector(new TournamentSelector());
             ea.setElite(eliteSize);
 
             // set up loggers
@@ -176,8 +184,8 @@ public class DoubleDigest {
                 System.out.println(logFilePrefix + " Generation " + i + ": " + best.getObjectiveValue());
 
                 // ukoncovaci podminka - ale musi se vypnout logy, jinak to spadne!! radky 122 a 123
-                /*if (best.getObjectiveValue() == 1.0)
-                    i = maxGen;*/
+                if (best.getObjectiveValue() == 0.0)
+                    i = maxGen;
 
                 StatsLogger.logFitness(pop, out);
                 StatsLogger.logObjective(pop, progOut);
@@ -240,7 +248,26 @@ public class DoubleDigest {
         ab = new int[strArray.length];
         for(int i = 0; i < strArray.length; i++) {
             ab[i] = Integer.parseInt(strArray[i]);
-        }}
+        }
+
+        int sum_a = 0;
+        int sum_b = 0;
+        int sum_ab = 0;
+
+        for (int i : a) {
+            sum_a += i;
+        }
+        for (int i : b) {
+            sum_b += i;
+        }
+        for (int i : ab) {
+            sum_ab += i;
+        }
+        if (sum_a != sum_ab || sum_b != sum_ab){
+            System.err.println("Wrong input format.");
+            System.exit(1);
+        }
+    }
 
 
     /**
