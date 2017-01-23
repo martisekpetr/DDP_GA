@@ -26,6 +26,7 @@ public class DoubleDigest {
     static double xoverProb;
     static double mutProb;
     static double mutProbPerEnzyme;
+    static double geneChangePercentage;
     static String enableDetailsLog;
     static String outputDirectory;
     static String objectiveFilePrefix;
@@ -49,8 +50,9 @@ public class DoubleDigest {
         maxGen = Integer.parseInt(prop.getProperty("ea.maxGenerations", "20"));
         popSize = Integer.parseInt(prop.getProperty("ea.popSize", "30"));
         xoverProb = Double.parseDouble(prop.getProperty("ea.xoverProb", "0.8"));
-        mutProb = Double.parseDouble(prop.getProperty("ea.mutProb", "0.05"));
-        mutProbPerEnzyme = Double.parseDouble(prop.getProperty("ea.mutProbPerEnzyme", "0.04"));
+        mutProb = Double.parseDouble(prop.getProperty("ea.mutProb", "0.4"));
+        mutProbPerEnzyme = Double.parseDouble(prop.getProperty("ea.mutProbPerEnzyme", "0.5"));
+        geneChangePercentage = Double.parseDouble(prop.getProperty("ea.geneChangePercentage", "0.3"));
         eliteSize = Double.parseDouble(prop.getProperty("ea.eliteSize", "0.1"));
         // input file or folder
         // tohle nastavovat v ga-digest.properties, tady je to jen backup default
@@ -150,10 +152,14 @@ public class DoubleDigest {
             EvolutionaryAlgorithm ea = new EvolutionaryAlgorithm();
             // set fitness
             ea.setFitnessFunction(new DigestFitness(a, b, ab));
+
             // set genetic operators
-            //ea.addOperator(new Order1XOverDoubleDigest(xoverProb));
-            ea.addOperator(new PMXover(xoverProb));
-            ea.addOperator(new DigestInversionMutation(mutProb, mutProbPerEnzyme));
+
+            ea.addOperator(new Order1XOverDoubleDigest(xoverProb));
+            //ea.addOperator(new PMXover(xoverProb));
+            //ea.addOperator(new DigestInversionMutation(mutProb, mutProbPerEnzyme));
+            ea.addOperator(new DigestSwappingMutation(mutProb, mutProbPerEnzyme, geneChangePercentage));
+
             ea.addEnvironmentalSelector(new RouletteWheelSelector());
             ea.setElite(eliteSize);
 
