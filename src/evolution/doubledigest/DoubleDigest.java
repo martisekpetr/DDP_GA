@@ -55,6 +55,7 @@ public class DoubleDigest {
         // input file or folder
         // tohle nastavovat v ga-digest.properties, tady je to jen backup default
         String inputFile = prop.getProperty("prob.inputFile", "resources/digest_hard.txt");
+
         repeats = Integer.parseInt(prop.getProperty("xset.repeats", "10"));
         enableDetailsLog = prop.getProperty("xlog.detailsLog", "enabled");
         if (!enableDetailsLog.equals("enabled")) {
@@ -165,7 +166,12 @@ public class DoubleDigest {
             for (int i = 0; i < maxGen; i++) {
                 ea.evolve(pop);
 
-                System.out.println(logFilePrefix + " Generation " + i + ": " + pop.getSortedIndividuals().get(0).getObjectiveValue());
+                Individual best = pop.getSortedIndividuals().get(0);
+                System.out.println(logFilePrefix + " Generation " + i + ": " + best.getObjectiveValue());
+
+                // ukoncovaci podminka - ale musi se vypnout logy, jinak to spadne!! radky 122 a 123
+                /*if (best.getObjectiveValue() == 1.0)
+                    i = maxGen;*/
 
                 StatsLogger.logFitness(pop, out);
                 StatsLogger.logObjective(pop, progOut);
@@ -206,7 +212,7 @@ public class DoubleDigest {
             System.err.println("Missing line.");
             throw new IOException();
         }
-        strArray = line.split(" ");
+        strArray = line.replace(",","").split(" ");
         a = new int[strArray.length];
         for(int i = 0; i < strArray.length; i++) {
             a[i] = Integer.parseInt(strArray[i]);
@@ -215,7 +221,7 @@ public class DoubleDigest {
             System.err.println("Missing line.");
             throw new IOException();
         }
-        strArray = line.split(" ");
+        strArray = line.replace(",","").split(" ");
         b = new int[strArray.length];
         for(int i = 0; i < strArray.length; i++) {
             b[i] = Integer.parseInt(strArray[i]);
@@ -224,7 +230,7 @@ public class DoubleDigest {
             System.err.println("Missing line.");
             throw new IOException();
         }
-        strArray = line.split(" ");
+        strArray = line.replace(",","").split(" ");
         ab = new int[strArray.length];
         for(int i = 0; i < strArray.length; i++) {
             ab[i] = Integer.parseInt(strArray[i]);
