@@ -28,7 +28,9 @@ do
 	logFileNames=$logFileNames,$outputDirectory/$basename
 done
 
+legendNames=`echo $legendNames | sed 's/^.//'`
 echo $legendNames
+logFileNames=`echo $logFileNames | sed 's/^.//'`
 echo $logFileNames
 
 bash createGraphs.sh -logFileNames $logFileNames -legendNames $legendNames
