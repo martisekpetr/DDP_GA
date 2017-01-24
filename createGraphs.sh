@@ -78,7 +78,8 @@ done
 
 plot=`echo $plot | sed 's/.$//'`
 
-plot="$plot \n\
+plot="set key bottom right\n\
+$plot \n\
 set output\n\
 set term pop\n"
 

@@ -98,12 +98,14 @@ public class DigestFitness implements FitnessFunction {
          * room for improvement
          */
         int distance = 0;
+        int matches = 0;
         int i = 0;
         int j = 0;
         while (i < computedAB.length && j < ab.length){
             if(computedAB[i] == ab[j]){
                 i++;
                 j++;
+                matches++;
             } else if(computedAB[i] < ab[j]){
                 distance++;
                 i++;
@@ -120,38 +122,14 @@ public class DigestFitness implements FitnessFunction {
             distance++;
             j++;
         }
-/*
-        int distance = 0;
-        int i = 0;
-        int j = 0;
-        while (i < computedAB.length && j < ab.length){
-            if(computedAB[i] == ab[j]){
-                i++;
-                j++;
-            } else if(computedAB[i] < ab[j]){
-                distance += ((computedAB[i]-ab[j])*(computedAB[i]-ab[j]))/ab[j];
-                i++;
-            } else {
-                distance += ((computedAB[i]-ab[j])*(computedAB[i]-ab[j]))/ab[j];
-                j++;
-            }
-        }*/
-        /*
-        while(i < cutsA.length){
-            distance += ((computedAB[i]-ab[j])*(computedAB[i]-ab[j]))/ab[j];
-            i++;
-        }
-        while(j < cutsB.length){
-            distance++;
-            j++;
-        }*/
 
-        digestIndividual.setObjectiveValue(distance);
+
+        digestIndividual.setObjectiveValue(matches / (float) computedAB.length);
 
         if(distance == 0){
             // TODO found the correct mapping, stop the evolution?
         }
-
-        return 1 / (float)distance;
+        return matches / (float) computedAB.length;
+        //return 1 / (float)distance;
     }
 }

@@ -116,7 +116,7 @@ public class DoubleDigest {
                 for (int i = 0; i < repeats; i++) {
                     Individual best = run(i);
                     bestInds.add(best);
-                    /* stop the evolution if objective == 0 */
+                    /* stop the evolution if objective == 0 *
                     if(best.getObjectiveValue() == 0.0){
                         break;
                     }
@@ -128,8 +128,8 @@ public class DoubleDigest {
                     System.out.println("run " + i + ": best objective=" + bestInds.get(i).getObjectiveValue());
                 }
                 // log the best individuals
-                //StatsLogger.processResults(fitnessFilePrefix, fitnessStatsFile, repeats, maxGen, popSize);
-                //StatsLogger.processResults(objectiveFilePrefix, objectiveStatsFile, repeats, maxGen, popSize);
+                StatsLogger.processResults(fitnessFilePrefix, fitnessStatsFile, repeats, maxGen, popSize);
+                StatsLogger.processResults(objectiveFilePrefix, objectiveStatsFile, repeats, maxGen, popSize);
             }
         }
     }
@@ -184,9 +184,10 @@ public class DoubleDigest {
                 System.out.println(logFilePrefix + " Generation " + i + ": " + best.getObjectiveValue());
 
                 // ukoncovaci podminka - ale musi se vypnout logy, jinak to spadne!! radky 122 a 123
-                if (best.getObjectiveValue() == 0.0)
+                /**
+                if (best.getObjectiveValue() == 1.0)
                     i = maxGen;
-
+                /**/
                 StatsLogger.logFitness(pop, out);
                 StatsLogger.logObjective(pop, progOut);
             }
