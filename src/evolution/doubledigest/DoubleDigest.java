@@ -37,6 +37,9 @@ public class DoubleDigest {
     static String detailsLogPrefix;
     static Properties prop;
     static int[] a, b, ab;
+    static String mutOp;
+    static String xoverOp;
+    static String selectOp;
 
     public static void main(String[] args) {
 
@@ -58,6 +61,10 @@ public class DoubleDigest {
         // input file or folder
         // tohle nastavovat v ga-digest.properties, tady je to jen backup default
         String inputFile = prop.getProperty("prob.inputFile", "resources/digest_hard.txt");
+
+        mutOp = prop.getProperty("prob.mutOp", "inv");
+        xoverOp = prop.getProperty("prob.xoverOp", "pmx");
+        selectOp= prop.getProperty("prob.selectOp", "roul");
 
         repeats = Integer.parseInt(prop.getProperty("xset.repeats", "10"));
         enableDetailsLog = prop.getProperty("xlog.detailsLog", "enabled");
@@ -162,13 +169,25 @@ public class DoubleDigest {
 
             // set genetic operators
 
-            ea.addOperator(new Order1XOverDoubleDigest(xoverProb));
-            //ea.addOperator(new PMXover(xoverProb));
-            ea.addOperator(new DigestInversionMutation(mutProb, mutProbPerEnzyme));
-            //ea.addOperator(new DigestSwappingMutation(mutProb, mutProbPerEnzyme, geneChangePercentage));
+            if(mutOp.equals("inv")){
+                ea.addOperator(new DigestInversionMutation(mutProb, mutProbPerEnzyme));
+            }
+            if (mutOp.equals("swp")){
+                ea.addOperator(new DigestSwappingMutation(mutProb, mutProbPerEnzyme, geneChangePercentage));
+            }
+            if(xoverOp.equals("pmx")){
+                ea.addOperator(new PMXover(xoverProb));
+            }
+            if(xoverOp.equals("ox")){
+                ea.addOperator(new Order1XOverDoubleDigest(xoverProb));
+            }
+            if(selectOp.equals("roul")){
+                ea.addEnvironmentalSelector(new RouletteWheelSelector());
+            }
+            if(selectOp.equals("tour")){
+                ea.addEnvironmentalSelector(new TournamentSelector());
+            }
 
-            //ea.addEnvironmentalSelector(new RouletteWheelSelector());
-            ea.addEnvironmentalSelector(new TournamentSelector());
             ea.setElite(eliteSize);
 
             // set up loggers

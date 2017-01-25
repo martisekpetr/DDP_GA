@@ -7,8 +7,8 @@ output="graph.svg"
 title="Objective value log"
 logScale=""
 path=$(pwd)
-scale=1
-barsEvery=20
+scale=1000
+barsEvery=200
 while [ "$1" != "" ]; do
 	case "$1" in
 	-logFileNames)

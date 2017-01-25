@@ -30,8 +30,3 @@ xset.repeats = 10
 xlog.detailsLog = disabled
 xlog.filePrefix = digestEasy
 
-prob.inputFile = resources/digest/real/15
-xlog.outputDirectory = diges    t/15
-prob.mutOp = swp
-prob.xoverOp = ox
-prob.selectOp = tour
